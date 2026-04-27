@@ -34,6 +34,13 @@ jobs:
             -p 3000:3000 \
             -e DATABASE_URL=postgresql://postgres:password@host.docker.internal:5432/studentdb \
             --name app student-api
+      
+      - name: Wait for app startup
+        run: sleep 10
+      
+      - name: Show logs
+        run: docker logs app
+
 
       - name: Check logs
         run: docker logs app
