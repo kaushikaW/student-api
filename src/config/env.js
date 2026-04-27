@@ -1,13 +1,11 @@
 import dotenv from "dotenv"
 
-// Choose environment file
-const envFile = process.env.NODE_ENV === "production"
-  ? ".env.docker"
-  : ".env"
-
-dotenv.config({ path: envFile })
+// Only load dotenv in local environment
+if (process.env.NODE_ENV !== "production" && !process.env.CI) {
+  dotenv.config()
+}
 
 export const config = {
-  port: process.env.PORT,
+  port: Number(process.env.PORT) || 3000,
   databaseUrl: process.env.DATABASE_URL
 }
