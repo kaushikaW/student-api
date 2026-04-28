@@ -31,7 +31,7 @@ jobs:
       - name: Debug APP_CONFIG
         env:
           APP_CONFIG: ${{ secrets.APP_CONFIG }}
-        run: node scripts/debug-env.js
+        run: node debug-env.js
 
       - name: Checkout code
         uses: actions/checkout@v4
