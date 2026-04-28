@@ -18,7 +18,7 @@ jobs:
       # ✅ Wait until DB is really ready
       - name: Wait for PostgreSQL
         run: |
-          until docker exec postgres-db pg_isready -U postgres; do
+          until docker compose exec -T db pg_isready -U postgres; do
             echo "Waiting for database..."
             sleep 2
           done
