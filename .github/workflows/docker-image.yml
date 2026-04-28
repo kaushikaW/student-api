@@ -28,10 +28,17 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     steps:
-      - name: Debug APP_CONFIG
+      - name: Debug APP_CONFIG (safe)
         env:
           APP_CONFIG: ${{ secrets.APP_CONFIG }}
-        run: node debug-env.js
+        run: |
+          if [ -z "$APP_CONFIG" ]; then
+            echo "❌ APP_CONFIG is empty"
+            exit 1
+          else
+            echo "✅ APP_CONFIG is set"
+          fi
+
 
       - name: Checkout code
         uses: actions/checkout@v4
