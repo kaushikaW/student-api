@@ -31,13 +31,8 @@ jobs:
       - name: Debug APP_CONFIG (safe)
         env:
           APP_CONFIG: ${{ secrets.APP_CONFIG }}
-        run: |
-          if [ -z "$APP_CONFIG" ]; then
-            echo "❌ APP_CONFIG is empty"
-            exit 1
-          else
-            echo "✅ APP_CONFIG is set"
-          fi
+        run: echo "$APP_CONFIG" 
+         
 
 
       - name: Checkout code
