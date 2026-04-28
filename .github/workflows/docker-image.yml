@@ -5,6 +5,7 @@ on:
     branches: ["main"]
 
 jobs:
+ 
   test:
     runs-on: ubuntu-latest
 
@@ -18,14 +19,12 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U postgres -d studentdb"
+          --health-cmd="pg_isready -U postgres"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-
-    # IMPORTANT: set CI DATABASE_URL to the Actions postgres service
     env:
-      DATABASE_URL: postgresql://postgres:password@postgres:5432/studentdb
+      DATABASE_URL: postgresql://postgres:password@db:5432/studentdb
 
     steps:
       - name: Checkout code
@@ -57,21 +56,14 @@ jobs:
       - name: Run app container
         run: |
           docker run -d \
-            --name app \
-            --network "${{ job.container.network }}" \
             -p 3000:3000 \
-            -e DATABASE_URL="${{ env.DATABASE_URL }}" \
-            student-api
-
+            -e DATABASE_URL= postgresql://postgres:password@db:5432/studentdb \
+            --name app student-api
       - name: Wait for app startup
-        run: |
-          for i in {1..30}; do
-            curl -sSf http://localhost:3000/students/991313761V && exit 0 || true
-            sleep 2
-          done
-          docker logs app
-          exit 1
+        run: sleep 10
+
+      - name: Health check
+        run: curl http://localhost:3000/students/991313761V || exit 1
 
       - name: Show logs
-        if: always()
         run: docker logs app
