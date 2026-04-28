@@ -5,6 +5,10 @@ on:
     branches: ["main"]
 
 jobs:
+  - name: Debug APP_CONFIG
+    env:
+      APP_CONFIG: ${{ secrets.APP_CONFIG }}
+    run: node scripts/debug-env.js
   test:
     runs-on: ubuntu-latest
 
