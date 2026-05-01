@@ -1,0 +1,40 @@
+name: CI/CD Pipeline AZURE
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: 3tier-app-dev-vm1
+
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Stop old containers
+        run: docker compose down
+
+      - name: Build and start services
+        run: docker compose up -d --build
+
+      - name: Wait for PostgreSQL
+        run: |
+          until docker compose exec -T db pg_isready -U $POSTGRES_USER; do
+            echo "Waiting for database..."
+            sleep 2
+          done
+
+      - name: Run Prisma migrations
+        run: docker compose exec -T app npx prisma migrate deploy
+
+      - name: Health check
+        run: curl http://localhost:3000/students/991313761V || exit 1
+
+      - name: Show logs
+        run: docker compose logs
