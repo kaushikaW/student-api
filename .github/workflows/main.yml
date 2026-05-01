@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: 3tier-app-dev-vm1
+    runs-on:  self-hosted
 
     env:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
